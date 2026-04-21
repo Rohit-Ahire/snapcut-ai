@@ -1,4 +1,4 @@
-import { useState, useCallback, type DragEvent, type ChangeEvent } from "react";
+import { useState, useCallback, type ChangeEvent } from "react";
 import { Upload, ImageIcon, Loader2, Download, RotateCcw, AlertCircle } from "lucide-react";
 import { Button } from "./ui/button";
 
@@ -32,13 +32,6 @@ export function UploadZone() {
     setTimeout(() => setStatus("done"), 2200);
   }, []);
 
-  const onDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setDragOver(false);
-    const f = e.dataTransfer.files[0];
-    if (f) handleFile(f);
-  };
-
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (f) handleFile(f);
@@ -56,7 +49,12 @@ export function UploadZone() {
         <label
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
-          onDrop={onDrop}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragOver(false);
+            const f = e.dataTransfer.files[0];
+            if (f) handleFile(f);
+          }}
           className={`relative flex flex-col items-center justify-center w-full min-h-[420px] rounded-2xl border-2 border-dashed transition-all cursor-pointer
             ${dragOver ? "border-primary bg-primary/5 glow-primary" : "border-border hover:border-primary/60 hover:bg-card/40"}
             glass-card`}
