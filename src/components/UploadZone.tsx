@@ -159,8 +159,7 @@ export function UploadZone() {
                   glass-card`}
               >
                 <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onChange} />
-                <div className="h-24 w-full max-w-[240px] rounded-3xl bg-primary/10 flex items-center justify-center mb-6 animate-float overflow-hidden border border-primary/20 px-6 gap-3">
-                  <span className="text-4xl">✂️</span>
+                <div className="h-24 w-full max-w-[200px] rounded-3xl bg-primary/10 flex items-center justify-center mb-6 animate-float overflow-hidden border border-primary/20 px-6">
                   <span className="text-3xl font-bold tracking-tight text-white">
                     SnapCut <span className="bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] bg-clip-text text-transparent">AI</span>
                   </span>
@@ -213,8 +212,7 @@ export function UploadZone() {
                         resultPreview && (
                           <div className="relative h-full w-full flex items-center justify-center p-4">
                             <img src={resultPreview} alt="Processed" className="max-h-full max-w-full object-contain relative z-10" />
-                            <div className="absolute bottom-4 right-4 z-20 opacity-60 hover:opacity-100 transition-opacity flex items-center bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-md border border-white/10 gap-1.5">
-                               <span className="text-sm">✂️</span>
+                            <div className="absolute bottom-4 right-4 z-20 opacity-60 hover:opacity-100 transition-opacity flex items-center bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-md border border-white/10">
                                <span className="text-[10px] font-bold tracking-tighter text-white">
                                  SnapCut <span className="text-primary">AI</span>
                                </span>
@@ -240,7 +238,7 @@ export function UploadZone() {
                     <Download className="h-4 w-4" /> 
                     <span>Download PNG</span>
                     <div className="w-px h-4 bg-white/20 mx-1" />
-                    <span className="text-xs">✂️ AI</span>
+                    <span className="text-xs font-bold">AI</span>
                   </Button>
                 )}
               </div>

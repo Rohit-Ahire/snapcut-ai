@@ -103,7 +103,7 @@ function HistoryPage() {
                     <Download className="h-4 w-4" /> 
                     <span>Download</span>
                     <div className="w-px h-4 bg-white/20 mx-1" />
-                    <span className="text-xs">✂️ AI</span>
+                    <span className="text-xs font-bold">AI</span>
                   </Button>
                   <Button 
                     variant="ghost" 
