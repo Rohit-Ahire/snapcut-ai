@@ -134,10 +134,10 @@ export function UploadZone() {
     <div className="w-full">
       <Tabs defaultValue="upload" className="w-full">
         <TabsList className="grid w-full max-w-[400px] grid-cols-2 mb-8 mx-auto glass-card">
-          <TabsTrigger value="upload" className="data-[state=active]:bg-gradient-brand data-[state=active]:text-primary-foreground">
+          <TabsTrigger value="upload" className="text-white/60 data-[state=active]:bg-gradient-brand data-[state=active]:text-primary-foreground transition-all">
             <Upload className="mr-2 h-4 w-4" /> Upload
           </TabsTrigger>
-          <TabsTrigger value="history" className="data-[state=active]:bg-gradient-brand data-[state=active]:text-primary-foreground">
+          <TabsTrigger value="history" className="text-white/60 data-[state=active]:bg-gradient-brand data-[state=active]:text-primary-foreground transition-all">
             <History className="mr-2 h-4 w-4" /> History
           </TabsTrigger>
         </TabsList>
@@ -159,8 +159,8 @@ export function UploadZone() {
                   glass-card`}
               >
                 <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onChange} />
-                <div className="h-24 w-full max-w-[200px] rounded-3xl bg-primary/10 flex items-center justify-center mb-6 animate-float overflow-hidden border border-primary/20 px-6">
-                  <span className="text-3xl font-bold tracking-tight text-white">
+                <div className="h-20 w-full max-w-[240px] rounded-3xl bg-primary/10 flex items-center justify-center mb-6 animate-float overflow-hidden border border-primary/20 px-4">
+                  <span className="text-2xl font-bold tracking-tight text-white whitespace-nowrap">
                     SnapCut <span className="bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] bg-clip-text text-transparent">AI</span>
                   </span>
                 </div>
@@ -169,9 +169,9 @@ export function UploadZone() {
                   Join millions of users removing backgrounds instantly with AI. 
                   Drag & drop your file or click to browse.
                 </p>
-                <Button className="bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] text-white hover:opacity-90 shadow-xl shadow-primary/20 h-12 px-10 rounded-full transition-transform hover:scale-105 active:scale-95">
+                <div className="bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] text-white hover:opacity-90 shadow-xl shadow-primary/20 h-12 px-10 rounded-full transition-transform hover:scale-105 active:scale-95 flex items-center justify-center font-medium">
                   <Upload className="mr-2 h-5 w-5" /> Select Image
-                </Button>
+                </div>
                 {error && (
                   <div className="mt-6 flex items-center gap-2 text-sm text-destructive">
                     <AlertCircle className="h-4 w-4" /> {error}
