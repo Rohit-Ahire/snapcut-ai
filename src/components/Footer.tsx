@@ -11,9 +11,20 @@ export function Footer() {
             AI-powered background removal. Studio quality cutouts in under 5 seconds.
           </p>
         </div>
-        <FooterCol title="Product" links={[["Features","/features"],["Pricing","/pricing"],["API","/api-docs"],["Workspace","/app"]]} />
-        <FooterCol title="Company" links={[["About","/about"],["Contact","/contact"],["Blog","/blog"]]} />
-        <FooterCol title="Legal" links={[["Privacy","/privacy"],["Terms","/terms"]]} />
+        <FooterCol title="Product" links={[["Features","/features"],["Pricing","/pricing"],["Workspace","/app"]]} />
+        <div className="space-y-4">
+          <h4 className="text-sm font-semibold text-foreground mb-3">Contact</h4>
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p>Developed by <span className="text-foreground font-medium">Rohit</span></p>
+            <p>Indira University, Pune</p>
+            <p className="flex items-center gap-2">
+              <span className="text-xs">📧</span> rohitahire3108@gmail.com
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="text-xs">📞</span> 8830331182
+            </p>
+          </div>
+        </div>
       </div>
       <div className="border-t border-border/50 py-6 text-center text-xs text-muted-foreground">
         © {new Date().getFullYear()} SnapCut AI. All rights reserved.

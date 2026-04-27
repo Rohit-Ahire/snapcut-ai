@@ -8,7 +8,6 @@ const links = [
   { to: "/", label: "Home" },
   { to: "/features", label: "Features" },
   { to: "/pricing", label: "Pricing" },
-  { to: "/api-docs", label: "API" },
   { to: "/about", label: "About" },
   { to: "/history", label: "History" },
   { to: "/app", label: "Workspace" },
@@ -33,11 +32,11 @@ export function Navbar() {
           ))}
         </div>
         <div className="hidden items-center gap-3 md:flex">
-          <Button variant="ghost" asChild>
-            <Link to="/login">Sign in</Link>
-          </Button>
-          <Button asChild className="bg-gradient-brand text-primary-foreground hover:opacity-90 glow-primary">
-            <Link to="/app">Try free</Link>
+          <button className="px-4 py-2 text-sm font-medium hover:text-primary transition-colors">
+            Sign In
+          </button>
+          <Button asChild className="bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] text-white hover:opacity-90 shadow-lg shadow-primary/20 rounded-full px-6">
+            <Link to="/app">Get Started Free</Link>
           </Button>
         </div>
         <button

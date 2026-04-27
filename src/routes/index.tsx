@@ -22,32 +22,30 @@ function Index() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,oklch(0.35_0.18_280/0.4),transparent_60%)]" />
-        <div className="mx-auto max-w-7xl px-6 pt-20 pb-24 grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-card text-xs text-muted-foreground mb-6">
-              <Sparkles className="h-3 w-3 text-secondary" /> Powered by next-gen AI segmentation
-            </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05]">
-              Remove backgrounds in <span className="text-gradient-brand">5 seconds</span>.
-            </h1>
-            <p className="mt-6 text-lg text-muted-foreground max-w-xl">
-              SnapCut AI delivers studio-quality transparent cutouts for products, portraits and graphics — no Photoshop, no manual masking.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Button size="lg" asChild className="bg-gradient-brand text-primary-foreground hover:opacity-90 glow-primary text-base h-12 px-7">
-                <Link to="/app">Try free <ArrowRight className="ml-2 h-4 w-4" /></Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="text-base h-12 px-7">
-                <Link to="/pricing">View pricing</Link>
-              </Button>
-            </div>
-            <div className="mt-8 flex items-center gap-6 text-sm text-muted-foreground">
-              <span className="flex items-center gap-2"><Check className="h-4 w-4 text-secondary" /> 5 free images/day</span>
-              <span className="flex items-center gap-2"><Check className="h-4 w-4 text-secondary" /> No credit card</span>
-            </div>
+        <div className="mx-auto max-w-5xl px-6 pt-24 pb-24 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-card text-xs text-muted-foreground mb-10 animate-fade-in">
+            <Sparkles className="h-3 w-3 text-secondary" /> AI-Powered Background Removal
           </div>
-          <div className="flex justify-center lg:justify-end">
-            <BeforeAfter />
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.2] mb-6">
+            Remove Backgrounds <br />
+            <span className="text-gradient-brand">In Seconds</span>
+          </h1>
+          <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Transform your images instantly with our advanced AI technology. <br className="hidden md:block" />
+            Perfect for e-commerce, design projects, and creative work.
+          </p>
+          <div className="mt-12 flex flex-wrap gap-4 justify-center">
+            <Button size="lg" asChild className="bg-gradient-brand text-primary-foreground hover:opacity-90 glow-primary text-base h-14 px-8 rounded-xl transition-all hover:scale-105">
+              <Link to="/app">Start Removing Backgrounds <ArrowRight className="ml-2 h-5 w-5" /></Link>
+            </Button>
+            <Button size="lg" variant="outline" asChild className="text-base h-14 px-8 rounded-xl glass-card hover:bg-white/5 transition-all">
+              <Link to="/pricing">View Pricing</Link>
+            </Button>
+          </div>
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-sm text-muted-foreground/80">
+            <span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-secondary/70" /> 5 Free Images Daily</span>
+            <span className="flex items-center gap-2"><ImageIcon className="h-4 w-4 text-primary/70" /> No Signup Required</span>
+            <span className="flex items-center gap-2"><Zap className="h-4 w-4 text-accent/70" /> HD Quality Output</span>
           </div>
         </div>
       </section>

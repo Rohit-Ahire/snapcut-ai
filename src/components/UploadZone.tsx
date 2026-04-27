@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, type ChangeEvent } from "react";
 import { Upload, ImageIcon, Loader2, Download, RotateCcw, AlertCircle, History } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import logo from "@/assets/snapcut-logo.png";
 
 const MAX_SIZE = 10 * 1024 * 1024;
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
@@ -158,13 +159,19 @@ export function UploadZone() {
                   glass-card`}
               >
                 <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onChange} />
-                <div className="h-20 w-20 rounded-2xl bg-gradient-brand flex items-center justify-center glow-primary mb-6">
-                  <Upload className="h-9 w-9 text-primary-foreground" />
+                <div className="h-24 w-full max-w-[240px] rounded-3xl bg-primary/10 flex items-center justify-center mb-6 animate-float overflow-hidden border border-primary/20 px-6 gap-3">
+                  <span className="text-4xl">✂️</span>
+                  <span className="text-3xl font-bold tracking-tight text-white">
+                    SnapCut <span className="bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] bg-clip-text text-transparent">AI</span>
+                  </span>
                 </div>
-                <h3 className="text-2xl font-semibold mb-2">Drop your image here</h3>
-                <p className="text-muted-foreground mb-6">or click to browse — JPG, PNG, WEBP up to 10 MB</p>
-                <Button className="bg-gradient-brand text-primary-foreground hover:opacity-90">
-                  <ImageIcon className="mr-2 h-4 w-4" /> Select image
+                <h3 className="text-3xl font-bold mb-3 tracking-tight text-white">Upload an image</h3>
+                <p className="text-muted-foreground mb-10 max-w-sm mx-auto text-center px-4 leading-relaxed">
+                  Join millions of users removing backgrounds instantly with AI. 
+                  Drag & drop your file or click to browse.
+                </p>
+                <Button className="bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] text-white hover:opacity-90 shadow-xl shadow-primary/20 h-12 px-10 rounded-full transition-transform hover:scale-105 active:scale-95">
+                  <Upload className="mr-2 h-5 w-5" /> Select Image
                 </Button>
                 {error && (
                   <div className="mt-6 flex items-center gap-2 text-sm text-destructive">
@@ -204,7 +211,15 @@ export function UploadZone() {
                         </div>
                       ) : (
                         resultPreview && (
-                          <img src={resultPreview} alt="Processed" className="max-h-full max-w-full object-contain p-4 relative z-10" />
+                          <div className="relative h-full w-full flex items-center justify-center p-4">
+                            <img src={resultPreview} alt="Processed" className="max-h-full max-w-full object-contain relative z-10" />
+                            <div className="absolute bottom-4 right-4 z-20 opacity-60 hover:opacity-100 transition-opacity flex items-center bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-md border border-white/10 gap-1.5">
+                               <span className="text-sm">✂️</span>
+                               <span className="text-[10px] font-bold tracking-tighter text-white">
+                                 SnapCut <span className="text-primary">AI</span>
+                               </span>
+                             </div>
+                          </div>
                         )
                       )}
                     </div>
@@ -220,9 +235,12 @@ export function UploadZone() {
                 {status === "done" && (
                   <Button 
                     onClick={() => handleDownload(resultPreview ?? "", "snapcut-result.png")}
-                    className="bg-gradient-brand text-primary-foreground hover:opacity-90 glow-primary h-11 px-8"
+                    className="bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] text-white hover:opacity-90 shadow-lg shadow-primary/20 h-11 px-8 rounded-full flex items-center gap-2"
                   >
-                    <Download className="mr-2 h-4 w-4" /> Download PNG
+                    <Download className="h-4 w-4" /> 
+                    <span>Download PNG</span>
+                    <div className="w-px h-4 bg-white/20 mx-1" />
+                    <span className="text-xs">✂️ AI</span>
                   </Button>
                 )}
               </div>

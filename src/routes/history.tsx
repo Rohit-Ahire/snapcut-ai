@@ -3,6 +3,7 @@ import { SiteShell } from "@/components/SiteShell";
 import { Button } from "@/components/ui/button";
 import { History as HistoryIcon, Download, Trash2, ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
+import logo from "@/assets/snapcut-logo.png";
 
 export const Route = createFileRoute("/history")({
   component: HistoryPage,
@@ -97,9 +98,12 @@ function HistoryPage() {
                 <div className="flex items-center gap-3">
                   <Button 
                     onClick={() => handleDownload(item.resultUrl, `snapcut-${item.originalName}.png`)}
-                    className="bg-gradient-brand text-primary-foreground hover:opacity-90 glow-primary"
+                    className="bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] text-white hover:opacity-90 shadow-lg shadow-primary/20 rounded-full flex items-center gap-2"
                   >
-                    <Download className="mr-2 h-4 w-4" /> Download
+                    <Download className="h-4 w-4" /> 
+                    <span>Download</span>
+                    <div className="w-px h-4 bg-white/20 mx-1" />
+                    <span className="text-xs">✂️ AI</span>
                   </Button>
                   <Button 
                     variant="ghost" 
