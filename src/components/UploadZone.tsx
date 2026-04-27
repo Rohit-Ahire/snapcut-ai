@@ -46,19 +46,16 @@ export function UploadZone() {
 
   const handleDownload = async (url: string, filename: string) => {
     try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
+      // Use our local proxy to bypass CORS and force download
+      const proxyUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`;
       const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = filename;
+      link.href = proxyUrl;
+      link.download = filename; // Still good to have as fallback
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
     } catch (err) {
       console.error("Download failed", err);
-      // Fallback to opening in new tab if blob fetch fails
       window.open(url, "_blank");
     }
   };
