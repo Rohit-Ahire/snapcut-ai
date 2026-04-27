@@ -1,5 +1,5 @@
 {
-  "outputDirectory": "dist/client",
+  "outputDirectory": ".output/public",
   "rewrites": [
     {
       "source": "/(.*)",
