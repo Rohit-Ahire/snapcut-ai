@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/SiteShell";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import { businessDetails } from "@/config/business";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -46,6 +47,113 @@ const plans = [
 ];
 
 function PricingPage() {
+  const openRazorpayCheckout = async () => {
+    const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
+    if (!key || key.includes("xxxxxxxxxx")) {
+      window.alert("Razorpay key is missing/invalid. Set a real VITE_RAZORPAY_KEY_ID in your environment file.");
+      return;
+    }
+
+    const amount = Number(import.meta.env.VITE_RAZORPAY_PLAN_AMOUNT ?? "1900");
+    const currency = "INR";
+    let orderId: string | undefined;
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL ?? ""}/api/razorpay-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount,
+          currency,
+          receipt: `snapcut-pro-${Date.now()}`,
+          notes: { plan: "Pro Monthly" },
+        }),
+      });
+
+      if (!response.ok) {
+        const err = (await response.json()) as { error?: string };
+        throw new Error(err.error ?? "Unable to create Razorpay order.");
+      }
+
+      const data = (await response.json()) as { id?: string };
+      orderId = data.id;
+    } catch (error) {
+      console.error("Failed to create Razorpay order:", error);
+      // In local vite dev, /api routes may be unavailable. Fallback enables checkout testing.
+      if (import.meta.env.DEV) {
+        console.warn("Falling back to client-only checkout mode (no order_id) in dev.");
+      } else {
+        window.alert(
+          "Unable to start payment right now. Please check Razorpay keys and make sure the payment API is running.",
+        );
+        return;
+      }
+    }
+
+    const existingScript = document.getElementById("razorpay-checkout-js");
+    if (!existingScript) {
+      const script = document.createElement("script");
+      script.id = "razorpay-checkout-js";
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      document.body.appendChild(script);
+      await new Promise((resolve) => {
+        script.onload = resolve;
+      });
+    }
+
+    const Razorpay = (window as Window & { Razorpay?: new (options: Record<string, unknown>) => { open: () => void } })
+      .Razorpay;
+    if (!Razorpay) {
+      window.alert("Unable to load Razorpay Checkout. Please try again.");
+      return;
+    }
+
+    const options: Record<string, unknown> = {
+      key,
+      amount,
+      currency,
+      name: businessDetails.tradeName,
+      description: "SnapCut AI Pro Monthly Plan",
+      prefill: {
+        name: businessDetails.tradeName,
+        email: businessDetails.supportEmail,
+        contact: businessDetails.supportPhone,
+      },
+      notes: {
+        business: businessDetails.legalName,
+      },
+      theme: {
+        color: "#6366f1",
+      },
+      handler: (response: Record<string, string>) => {
+        console.info("Razorpay payment success:", response);
+        window.alert("Payment successful. Your Pro plan will be activated shortly.");
+      },
+      modal: {
+        ondismiss: () => {
+          console.info("Razorpay popup closed by user");
+        },
+      },
+    };
+
+    if (orderId) {
+      options.order_id = orderId;
+    }
+
+    const checkout = new Razorpay(options);
+    if (typeof (checkout as { on?: (event: string, cb: (resp: Record<string, unknown>) => void) => void }).on === "function") {
+      (checkout as { on: (event: string, cb: (resp: Record<string, unknown>) => void) => void }).on(
+        "payment.failed",
+        (response) => {
+          console.error("Razorpay payment failed:", response);
+          window.alert("Payment failed. Please retry with valid test credentials or use another method.");
+        },
+      );
+    }
+    checkout.open();
+  };
+
   return (
     <SiteShell>
       <section className="mx-auto max-w-7xl px-6 py-20">
@@ -82,13 +190,19 @@ function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <Button
-                asChild
-                className={`mt-8 w-full ${p.highlighted ? "bg-gradient-brand text-primary-foreground hover:opacity-90" : ""}`}
-                variant={p.highlighted ? "default" : "outline"}
-              >
-                <Link to="/app">{p.cta}</Link>
-              </Button>
+              {p.highlighted ? (
+                <Button
+                  onClick={openRazorpayCheckout}
+                  className="mt-8 w-full bg-gradient-brand text-primary-foreground hover:opacity-90"
+                  variant="default"
+                >
+                  {p.cta}
+                </Button>
+              ) : (
+                <Button asChild className="mt-8 w-full" variant="outline">
+                  <Link to="/app">{p.cta}</Link>
+                </Button>
+              )}
             </div>
           ))}
         </div>

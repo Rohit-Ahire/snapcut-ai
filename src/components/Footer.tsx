@@ -11,18 +11,40 @@ export function Footer() {
             AI-powered background removal. Studio quality cutouts in under 5 seconds.
           </p>
         </div>
-        <FooterCol title="Product" links={[["Features","/features"],["Pricing","/pricing"],["Workspace","/app"]]} />
+        <FooterCol
+          title="Product"
+          links={[
+            ["Features", "/features"],
+            ["Pricing", "/pricing"],
+            ["Workspace", "/app"],
+            ["API", "/api-docs"],
+          ]}
+        />
+        <FooterCol
+          title="Company"
+          links={[
+            ["About", "/about"],
+            ["History", "/history"],
+            ["Contact", "/contact-us"],
+          ]}
+        />
+        <FooterCol
+          title="Legal"
+          links={[
+            ["Privacy Policy", "/privacy-policy"],
+            ["Refund & Cancellation", "/refund-cancellation"],
+            ["Shipping & Delivery", "/shipping-delivery"],
+            ["Terms & Conditions", "/terms-and-conditions"],
+          ]}
+        />
         <div className="space-y-4">
           <h4 className="text-sm font-semibold text-foreground mb-3">Contact</h4>
           <div className="space-y-3 text-sm text-muted-foreground">
-            <p>Developed by <span className="text-foreground font-medium">Rohit</span></p>
-            <p>Indira University, Pune</p>
-            <p className="flex items-center gap-2">
-              <span className="text-xs">📧</span> rohitahire3108@gmail.com
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="text-xs">📞</span> 8830331182
-            </p>
+            <p>Phone: 8830331182</p>
+            <p>For support and business details, visit Contact Us.</p>
+            <Link to="/contact-us" className="inline-block text-primary hover:underline">
+              Contact Us Page
+            </Link>
           </div>
         </div>
       </div>
