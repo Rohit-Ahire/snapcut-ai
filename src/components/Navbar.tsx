@@ -27,6 +27,7 @@ export function Navbar() {
     let isMounted = true;
 
     const syncSession = async () => {
+      if (!supabase) return;
       const { data } = await supabase.auth.getSession();
       if (isMounted) {
         setIsLoggedIn(Boolean(data.session));

@@ -29,7 +29,7 @@ function LoginPage() {
   useEffect(() => {
     const checkSession = async () => {
       if (!supabase) return;
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabase!.auth.getSession();
       if (data.session) {
         navigate({ to: "/dashboard" });
       }
