@@ -6,16 +6,6 @@ import { Sparkles } from "lucide-react";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/app")({
-  beforeLoad: async () => {
-    if (!isSupabaseConfigured || !supabase) {
-      throw redirect({ to: "/login" });
-    }
-
-    const { data } = await supabase!.auth.getSession();
-    if (!data.session) {
-      throw redirect({ to: "/login" });
-    }
-  },
   head: () => ({
     meta: [
       { title: "Workspace — SnapCut AI" },
