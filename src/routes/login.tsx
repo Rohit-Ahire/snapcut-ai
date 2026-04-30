@@ -126,12 +126,9 @@ function LoginPage() {
 
   return (
     <SiteShell>
-      <section className="mx-auto flex w-full max-w-4xl items-center px-6 py-16 relative z-10">
-        <div className="grid w-full gap-6 rounded-3xl border border-border/60 bg-card/70 p-6 shadow-2xl md:grid-cols-2 md:p-10 relative overflow-hidden">
-          {/* Add a subtle background glow to replace backdrop-blur if it was causing issues */}
-          <div className="absolute inset-0 bg-background/20 -z-10" />
-          
-          <div className="space-y-4">
+      <section className="mx-auto flex w-full max-w-4xl items-center px-6 py-16 relative z-[100] pointer-events-auto">
+        <div className="grid w-full gap-6 rounded-3xl border border-border/60 bg-card/80 p-6 shadow-2xl md:grid-cols-2 md:p-10 relative">
+          <div className="space-y-4 pointer-events-auto">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">SnapCut AI Account</p>
             <h1 className="text-3xl font-bold leading-tight">
               {isSignup ? "Create your account" : "Welcome back"}
@@ -146,7 +143,7 @@ function LoginPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border/60 bg-background/60 p-5 relative z-20">
+          <div className="rounded-2xl border border-border/60 bg-background/60 p-5 relative z-[110] pointer-events-auto">
             <div className="mb-5 grid grid-cols-2 rounded-lg bg-muted p-1">
               <button
                 type="button"
@@ -155,7 +152,7 @@ function LoginPage() {
                   setError(null);
                   setSuccess(null);
                 }}
-                className={`rounded-md px-3 py-2 text-sm transition ${!isSignup ? "bg-background text-foreground shadow" : "text-muted-foreground"}`}
+                className={`rounded-md px-3 py-2 text-sm transition cursor-pointer pointer-events-auto ${!isSignup ? "bg-background text-foreground shadow" : "text-muted-foreground"}`}
               >
                 Login
               </button>
@@ -166,43 +163,43 @@ function LoginPage() {
                   setError(null);
                   setSuccess(null);
                 }}
-                className={`rounded-md px-3 py-2 text-sm transition ${isSignup ? "bg-background text-foreground shadow" : "text-muted-foreground"}`}
+                className={`rounded-md px-3 py-2 text-sm transition cursor-pointer pointer-events-auto ${isSignup ? "bg-background text-foreground shadow" : "text-muted-foreground"}`}
               >
                 Signup
               </button>
             </div>
 
-            <form className="space-y-4 relative z-30" onSubmit={handleSubmit}>
+            <form className="space-y-4 relative z-[120] pointer-events-auto" onSubmit={handleSubmit}>
               <div className="relative">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="cursor-text">Email</Label>
                 <Input
                   ref={emailRef}
                   id="email"
                   name="email"
                   type="email"
                   placeholder="you@example.com"
-                  className="mt-1.5 bg-background/50"
+                  className="mt-1.5 bg-background/80 text-foreground cursor-text pointer-events-auto"
                   autoComplete="email"
                   autoFocus
                   required
                 />
               </div>
               <div className="relative">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="cursor-text">Password</Label>
                 <div className="mt-1.5 flex gap-2">
                   <Input
                     id="password"
                     name="password"
                     type={isPasswordVisible ? "text" : "password"}
                     autoComplete={isSignup ? "new-password" : "current-password"}
-                    className="bg-background/50"
+                    className="bg-background/80 text-foreground cursor-text pointer-events-auto"
                     minLength={6}
                     required
                   />
                   <Button
                     type="button"
                     variant="outline"
-                    className="shrink-0"
+                    className="shrink-0 cursor-pointer pointer-events-auto"
                     onClick={() => setIsPasswordVisible((prev) => !prev)}
                   >
                     {isPasswordVisible ? "Hide" : "Show"}
@@ -210,20 +207,22 @@ function LoginPage() {
                 </div>
               </div>
               {isSignup && (
-                <div>
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <div className="relative">
+                  <Label htmlFor="confirmPassword" className="cursor-text">Confirm Password</Label>
                   <div className="mt-1.5 flex gap-2">
                     <Input
                       id="confirmPassword"
                       name="confirmPassword"
                       type={isConfirmPasswordVisible ? "text" : "password"}
                       autoComplete="new-password"
+                      className="bg-background/80 text-foreground cursor-text pointer-events-auto"
                       minLength={6}
                       required
                     />
                     <Button
                       type="button"
                       variant="outline"
+                      className="shrink-0 cursor-pointer pointer-events-auto"
                       onClick={() => setIsConfirmPasswordVisible((prev) => !prev)}
                     >
                       {isConfirmPasswordVisible ? "Hide" : "Show"}
@@ -241,15 +240,15 @@ function LoginPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting || !isSupabaseConfigured}
-                className="w-full bg-gradient-brand text-primary-foreground hover:opacity-90"
+                className="w-full bg-gradient-brand text-primary-foreground hover:opacity-90 cursor-pointer pointer-events-auto"
               >
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {submitLabel}
               </Button>
             </form>
 
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              <Link to="/" className="text-foreground hover:text-primary">Back to home</Link>
+            <p className="mt-4 text-center text-sm text-muted-foreground pointer-events-auto">
+              <Link to="/" className="text-foreground hover:text-primary cursor-pointer pointer-events-auto">Back to home</Link>
             </p>
           </div>
         </div>
