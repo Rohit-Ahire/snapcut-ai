@@ -1,28 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { FormEvent, useMemo, useState, useEffect, useRef } from "react";
+import { FormEvent, useState } from "react";
 import { SiteShell } from "@/components/SiteShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
-
-const AUTH_TIMEOUT_MS = 10000;
-
-function withTimeout<T>(promise: Promise<T>, timeoutMs = AUTH_TIMEOUT_MS): Promise<T> {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) => {
-      timer = setTimeout(() => reject(new Error("Request timed out. Check your connection and try again.")), timeoutMs);
-    }),
-  ]).finally(() => {
-    if (timer) {
-      clearTimeout(timer);
-    }
-  });
-}
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -36,29 +19,13 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const emailRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isSignup = mode === "signup";
-  const submitLabel = useMemo(() => {
-    if (isSubmitting) {
-      return isSignup ? "Creating account..." : "Signing in...";
-    }
-    return isSignup ? "Create account" : "Sign in";
-  }, [isSignup, isSubmitting]);
-
-  useEffect(() => {
-    // Force focus on mount to ensure interaction is ready
-    const timer = setTimeout(() => {
-      emailRef.current?.focus();
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [mode]); // Re-focus when switching mode
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -68,57 +35,25 @@ function LoginPage() {
     const formData = new FormData(e.currentTarget);
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "");
-    const confirmPassword = String(formData.get("confirmPassword") ?? "");
 
     if (!isSupabaseConfigured || !supabase) {
-      setError("Authentication is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local or .env.");
-      return;
-    }
-
-    if (!email || !password) {
-      setError("Email and password are required.");
-      return;
-    }
-
-    if (isSignup && password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("Supabase is not configured.");
       return;
     }
 
     setIsSubmitting(true);
     try {
       if (isSignup) {
-        const { error: signUpError } = await withTimeout(
-          supabase.auth.signUp({
-            email,
-            password,
-          }),
-        );
-
-        if (signUpError) {
-          setError(signUpError.message);
-          return;
-        }
-
-        setSuccess("Account created. Please verify your email, then sign in.");
-        return;
+        const { error: signUpError } = await supabase.auth.signUp({ email, password });
+        if (signUpError) throw signUpError;
+        setSuccess("Account created! Check your email for verification.");
+      } else {
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) throw signInError;
+        navigate({ to: "/app" });
       }
-
-      const { error: signInError } = await withTimeout(
-        supabase.auth.signInWithPassword({
-          email,
-          password,
-        }),
-      );
-
-      if (signInError) {
-        setError(signInError.message);
-        return;
-      }
-
-      await navigate({ to: "/app" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to authenticate right now. Please try again.");
+      setError(err instanceof Error ? err.message : "Authentication failed");
     } finally {
       setIsSubmitting(false);
     }
@@ -126,133 +61,72 @@ function LoginPage() {
 
   return (
     <SiteShell>
-      <section className="mx-auto flex w-full max-w-4xl items-center px-6 py-16 relative z-[100] pointer-events-auto">
-        <div className="grid w-full gap-6 rounded-3xl border border-border/60 bg-card/80 p-6 shadow-2xl md:grid-cols-2 md:p-10 relative">
-          <div className="space-y-4 pointer-events-auto">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">SnapCut AI Account</p>
-            <h1 className="text-3xl font-bold leading-tight">
-              {isSignup ? "Create your account" : "Welcome back"}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {isSignup
-                ? "Sign up to save processing history and continue in workspace."
-                : "Sign in to access your workspace and image history."}
+      <div className="container mx-auto max-w-lg px-6 py-20">
+        <div className="rounded-3xl border border-border bg-card p-8 shadow-xl">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold">{isSignup ? "Join SnapCut AI" : "Welcome Back"}</h1>
+            <p className="mt-2 text-muted-foreground">
+              {isSignup ? "Create an account to get started" : "Sign in to your account"}
             </p>
-            <div className="rounded-xl border border-border/60 bg-background/40 p-4 text-sm text-muted-foreground">
-              Use your Supabase email/password account. Login redirects directly to `Workspace`.
-            </div>
           </div>
 
-          <div className="rounded-2xl border border-border/60 bg-background/60 p-5 relative z-[110] pointer-events-auto">
-            <div className="mb-5 grid grid-cols-2 rounded-lg bg-muted p-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setMode("login");
-                  setError(null);
-                  setSuccess(null);
-                }}
-                className={`rounded-md px-3 py-2 text-sm transition cursor-pointer pointer-events-auto ${!isSignup ? "bg-background text-foreground shadow" : "text-muted-foreground"}`}
-              >
-                Login
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMode("signup");
-                  setError(null);
-                  setSuccess(null);
-                }}
-                className={`rounded-md px-3 py-2 text-sm transition cursor-pointer pointer-events-auto ${isSignup ? "bg-background text-foreground shadow" : "text-muted-foreground"}`}
-              >
-                Signup
-              </button>
-            </div>
+          <div className="mb-6 flex rounded-lg bg-muted p-1">
+            <button
+              onClick={() => setMode("login")}
+              className={`flex-1 rounded-md py-2 text-sm font-medium transition ${!isSignup ? "bg-background shadow-sm" : "text-muted-foreground"}`}
+            >
+              Login
+            </button>
+            <button
+              onClick={() => setMode("signup")}
+              className={`flex-1 rounded-md py-2 text-sm font-medium transition ${isSignup ? "bg-background shadow-sm" : "text-muted-foreground"}`}
+            >
+              Signup
+            </button>
+          </div>
 
-            <form className="space-y-4 relative z-[120] pointer-events-auto" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" name="email" type="email" placeholder="you@example.com" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
               <div className="relative">
-                <Label htmlFor="email" className="cursor-text">Email</Label>
                 <Input
-                  ref={emailRef}
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  className="mt-1.5 bg-background/80 text-foreground cursor-text pointer-events-auto"
-                  autoComplete="email"
-                  autoFocus
+                  id="password"
+                  name="password"
+                  type={isPasswordVisible ? "text" : "password"}
+                  minLength={6}
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  {isPasswordVisible ? "Hide" : "Show"}
+                </button>
               </div>
-              <div className="relative">
-                <Label htmlFor="password" className="cursor-text">Password</Label>
-                <div className="mt-1.5 flex gap-2">
-                  <Input
-                    id="password"
-                    name="password"
-                    type={isPasswordVisible ? "text" : "password"}
-                    autoComplete={isSignup ? "new-password" : "current-password"}
-                    className="bg-background/80 text-foreground cursor-text pointer-events-auto"
-                    minLength={6}
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="shrink-0 cursor-pointer pointer-events-auto"
-                    onClick={() => setIsPasswordVisible((prev) => !prev)}
-                  >
-                    {isPasswordVisible ? "Hide" : "Show"}
-                  </Button>
-                </div>
-              </div>
-              {isSignup && (
-                <div className="relative">
-                  <Label htmlFor="confirmPassword" className="cursor-text">Confirm Password</Label>
-                  <div className="mt-1.5 flex gap-2">
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type={isConfirmPasswordVisible ? "text" : "password"}
-                      autoComplete="new-password"
-                      className="bg-background/80 text-foreground cursor-text pointer-events-auto"
-                      minLength={6}
-                      required
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="shrink-0 cursor-pointer pointer-events-auto"
-                      onClick={() => setIsConfirmPasswordVisible((prev) => !prev)}
-                    >
-                      {isConfirmPasswordVisible ? "Hide" : "Show"}
-                    </Button>
-                  </div>
-                </div>
-              )}
-              {!isSupabaseConfigured && (
-                <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
-                  Supabase is not configured. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in `.env.local`.
-                </p>
-              )}
-              {error && <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>}
-              {success && <p className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-400">{success}</p>}
-              <Button
-                type="submit"
-                disabled={isSubmitting || !isSupabaseConfigured}
-                className="w-full bg-gradient-brand text-primary-foreground hover:opacity-90 cursor-pointer pointer-events-auto"
-              >
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {submitLabel}
-              </Button>
-            </form>
+            </div>
 
-            <p className="mt-4 text-center text-sm text-muted-foreground pointer-events-auto">
-              <Link to="/" className="text-foreground hover:text-primary cursor-pointer pointer-events-auto">Back to home</Link>
-            </p>
+            {error && <p className="text-sm text-destructive">{error}</p>}
+            {success && <p className="text-sm text-emerald-500">{success}</p>}
+
+            <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-brand">
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSignup ? "Create Account" : "Sign In"}
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Link to="/" className="text-sm text-muted-foreground hover:text-primary">
+              &larr; Back to home
+            </Link>
           </div>
         </div>
-      </section>
+      </div>
     </SiteShell>
   );
+}
 }
