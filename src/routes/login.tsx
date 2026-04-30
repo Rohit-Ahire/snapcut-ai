@@ -43,17 +43,27 @@ function LoginPage() {
 
     setIsSubmitting(true);
     try {
+      // Add a 15-second timeout to prevent the form from getting "stuck"
+      const authPromise = isSignup 
+        ? supabase.auth.signUp({ email, password })
+        : supabase.auth.signInWithPassword({ email, password });
+
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Request timed out. Please check your internet and try again.")), 15000)
+      );
+
+      const { data, error: authError } = await Promise.race([authPromise, timeoutPromise]) as any;
+
+      if (authError) throw authError;
+
       if (isSignup) {
-        const { error: signUpError } = await supabase.auth.signUp({ email, password });
-        if (signUpError) throw signUpError;
         setSuccess("Account created! Check your email for verification.");
       } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInError) throw signInError;
-        navigate({ to: "/app" });
+        await navigate({ to: "/app" });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Authentication failed");
+      console.error("Auth error:", err);
+      setError(err instanceof Error ? err.message : "Authentication failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
