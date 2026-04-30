@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { SiteShell } from "@/components/SiteShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,18 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check session on mount to prevent double-login
+  useEffect(() => {
+    const checkSession = async () => {
+      if (!supabase) return;
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        navigate({ to: "/dashboard" });
+      }
+    };
+    checkSession();
+  }, [navigate]);
 
   const isSignup = mode === "signup";
 
@@ -70,10 +82,10 @@ function LoginPage() {
         setSuccess("Account created! Please check your email inbox to verify your account before signing in.");
         setIsSubmitting(false);
       } else {
-        console.log("Login successful, navigating to app...");
+        console.log("Login successful, navigating to dashboard...");
         // We set submitting to false before navigating to ensure the UI isn't locked if navigation is slow
         setIsSubmitting(false);
-        await navigate({ to: "/app" });
+        await navigate({ to: "/dashboard" });
       }
     } catch (err) {
       console.error("Auth error detail:", err);

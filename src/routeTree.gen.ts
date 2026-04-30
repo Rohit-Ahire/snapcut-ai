@@ -17,6 +17,7 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as FeaturesRouteImport } from './routes/features'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactUsRouteImport } from './routes/contact-us'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as ApiDocsRouteImport } from './routes/api-docs'
@@ -63,6 +64,11 @@ const FeaturesRoute = FeaturesRouteImport.update({
   path: '/features',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactUsRoute = ContactUsRouteImport.update({
   id: '/contact-us',
   path: '/contact-us',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/api-docs': typeof ApiDocsRoute
   '/app': typeof AppRoute
   '/contact-us': typeof ContactUsRoute
+  '/dashboard': typeof DashboardRoute
   '/features': typeof FeaturesRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/api-docs': typeof ApiDocsRoute
   '/app': typeof AppRoute
   '/contact-us': typeof ContactUsRoute
+  '/dashboard': typeof DashboardRoute
   '/features': typeof FeaturesRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/api-docs': typeof ApiDocsRoute
   '/app': typeof AppRoute
   '/contact-us': typeof ContactUsRoute
+  '/dashboard': typeof DashboardRoute
   '/features': typeof FeaturesRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/api-docs'
     | '/app'
     | '/contact-us'
+    | '/dashboard'
     | '/features'
     | '/history'
     | '/login'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/api-docs'
     | '/app'
     | '/contact-us'
+    | '/dashboard'
     | '/features'
     | '/history'
     | '/login'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/api-docs'
     | '/app'
     | '/contact-us'
+    | '/dashboard'
     | '/features'
     | '/history'
     | '/login'
@@ -189,6 +201,7 @@ export interface RootRouteChildren {
   ApiDocsRoute: typeof ApiDocsRoute
   AppRoute: typeof AppRoute
   ContactUsRoute: typeof ContactUsRoute
+  DashboardRoute: typeof DashboardRoute
   FeaturesRoute: typeof FeaturesRoute
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
@@ -257,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeaturesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact-us': {
       id: '/contact-us'
       path: '/contact-us'
@@ -301,6 +321,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDocsRoute: ApiDocsRoute,
   AppRoute: AppRoute,
   ContactUsRoute: ContactUsRoute,
+  DashboardRoute: DashboardRoute,
   FeaturesRoute: FeaturesRoute,
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
