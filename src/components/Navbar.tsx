@@ -2,7 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Logo } from "./Logo";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 const links = [
   { to: "/", label: "Home" },
@@ -15,6 +16,43 @@ const links = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (!supabase) {
+      setIsLoggedIn(false);
+      return;
+    }
+
+    let isMounted = true;
+
+    const syncSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (isMounted) {
+        setIsLoggedIn(Boolean(data.session));
+      }
+    };
+
+    syncSession();
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(Boolean(session));
+    });
+
+    return () => {
+      isMounted = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleSignOut = async () => {
+    if (!supabase) {
+      return;
+    }
+
+    await supabase.auth.signOut();
+    setOpen(false);
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 backdrop-blur-xl bg-background/70">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -32,9 +70,15 @@ export function Navbar() {
           ))}
         </div>
         <div className="hidden items-center gap-3 md:flex">
-          <button className="px-4 py-2 text-sm font-medium hover:text-primary transition-colors">
-            Sign In
-          </button>
+          {isLoggedIn ? (
+            <button onClick={handleSignOut} className="px-4 py-2 text-sm font-medium hover:text-primary transition-colors">
+              Sign out
+            </button>
+          ) : (
+            <Link to="/login" className="px-4 py-2 text-sm font-medium hover:text-primary transition-colors">
+              Sign in
+            </Link>
+          )}
           <Button asChild className="bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] text-white hover:opacity-90 shadow-lg shadow-primary/20 rounded-full px-6">
             <Link to="/app">Get Started Free</Link>
           </Button>
@@ -55,6 +99,15 @@ export function Navbar() {
                 {l.label}
               </Link>
             ))}
+            {isLoggedIn ? (
+              <button onClick={handleSignOut} className="text-left text-sm text-muted-foreground">
+                Sign out
+              </button>
+            ) : (
+              <Link to="/login" onClick={() => setOpen(false)} className="text-sm text-muted-foreground">
+                Sign in
+              </Link>
+            )}
             <Button asChild className="bg-gradient-brand text-primary-foreground">
               <Link to="/app" onClick={() => setOpen(false)}>Try free</Link>
             </Button>
