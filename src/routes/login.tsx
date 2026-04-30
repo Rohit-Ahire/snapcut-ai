@@ -29,6 +29,8 @@ function LoginPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     setError(null);
     setSuccess(null);
 
@@ -36,35 +38,46 @@ function LoginPage() {
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "");
 
+    console.log("Attempting auth for:", email, "Mode:", mode);
+
     if (!isSupabaseConfigured || !supabase) {
-      setError("Supabase is not configured.");
+      setError("Supabase is not configured. Please check your environment variables.");
+      return;
+    }
+
+    if (!email || !password) {
+      setError("Please enter both email and password.");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      // Add a 15-second timeout to prevent the form from getting "stuck"
       const authPromise = isSignup 
         ? supabase.auth.signUp({ email, password })
         : supabase.auth.signInWithPassword({ email, password });
 
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("Request timed out. Please check your internet and try again.")), 15000)
+        setTimeout(() => reject(new Error("Authentication request timed out. Please check your connection.")), 20000)
       );
 
-      const { data, error: authError } = await Promise.race([authPromise, timeoutPromise]) as any;
+      console.log("Waiting for Supabase response...");
+      const result = await Promise.race([authPromise, timeoutPromise]) as any;
+      console.log("Supabase response received:", result);
 
-      if (authError) throw authError;
+      if (result.error) throw result.error;
 
       if (isSignup) {
-        setSuccess("Account created! Check your email for verification.");
+        setSuccess("Account created! Please check your email inbox to verify your account before signing in.");
+        setIsSubmitting(false);
       } else {
+        console.log("Login successful, navigating to app...");
+        // We set submitting to false before navigating to ensure the UI isn't locked if navigation is slow
+        setIsSubmitting(false);
         await navigate({ to: "/app" });
       }
     } catch (err) {
-      console.error("Auth error:", err);
-      setError(err instanceof Error ? err.message : "Authentication failed. Please try again.");
-    } finally {
+      console.error("Auth error detail:", err);
+      setError(err instanceof Error ? err.message : "An unexpected error occurred during authentication.");
       setIsSubmitting(false);
     }
   };
