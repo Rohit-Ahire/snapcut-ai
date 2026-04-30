@@ -19,30 +19,19 @@ export function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    if (!supabase) {
-      setIsLoggedIn(false);
-      return;
-    }
+    if (!supabase) return;
 
-    let isMounted = true;
-
-    const syncSession = async () => {
-      if (!supabase) return;
-      const { data } = await supabase.auth.getSession();
-      if (isMounted) {
-        setIsLoggedIn(Boolean(data.session));
-      }
-    };
-
-    syncSession();
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(Boolean(session));
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
     });
 
-    return () => {
-      isMounted = false;
-      listener.subscription.unsubscribe();
-    };
+    // Listen for changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleSignOut = async () => {

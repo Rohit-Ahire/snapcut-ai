@@ -1,5 +1,5 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { FormEvent, useState, useEffect } from "react";
+import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
+import { FormEvent, useState } from "react";
 import { SiteShell } from "@/components/SiteShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,14 @@ import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
+  beforeLoad: async () => {
+    if (isSupabaseConfigured && supabase) {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        throw redirect({ to: "/dashboard" });
+      }
+    }
+  },
   head: () => ({
     meta: [
       { title: "Login / Signup — SnapCut AI" },
@@ -24,18 +32,6 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Check session on mount to prevent double-login
-  useEffect(() => {
-    const checkSession = async () => {
-      if (!supabase) return;
-      const { data } = await supabase!.auth.getSession();
-      if (data.session) {
-        navigate({ to: "/dashboard" });
-      }
-    };
-    checkSession();
-  }, [navigate]);
 
   const isSignup = mode === "signup";
 
