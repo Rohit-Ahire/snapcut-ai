@@ -107,12 +107,14 @@ function LoginPage() {
 
           <div className="mb-6 flex rounded-lg bg-muted p-1">
             <button
+              type="button"
               onClick={() => setMode("login")}
               className={`flex-1 rounded-md py-2 text-sm font-medium transition ${!isSignup ? "bg-background shadow-sm" : "text-muted-foreground"}`}
             >
               Login
             </button>
             <button
+              type="button"
               onClick={() => setMode("signup")}
               className={`flex-1 rounded-md py-2 text-sm font-medium transition ${isSignup ? "bg-background shadow-sm" : "text-muted-foreground"}`}
             >
@@ -123,17 +125,25 @@ function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" placeholder="you@example.com" required />
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                required
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm text-foreground"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
-                <Input
+                <input
                   id="password"
                   name="password"
                   type={isPasswordVisible ? "text" : "password"}
                   minLength={6}
                   required
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm text-foreground pr-10"
                 />
                 <button
                   type="button"
