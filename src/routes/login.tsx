@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState, useEffect, useRef } from "react";
 import { SiteShell } from "@/components/SiteShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +36,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const emailRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
@@ -50,6 +51,14 @@ function LoginPage() {
     }
     return isSignup ? "Create account" : "Sign in";
   }, [isSignup, isSubmitting]);
+
+  useEffect(() => {
+    // Force focus on mount to ensure interaction is ready
+    const timer = setTimeout(() => {
+      emailRef.current?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [mode]); // Re-focus when switching mode
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -167,6 +176,7 @@ function LoginPage() {
               <div className="relative">
                 <Label htmlFor="email">Email</Label>
                 <Input
+                  ref={emailRef}
                   id="email"
                   name="email"
                   type="email"
